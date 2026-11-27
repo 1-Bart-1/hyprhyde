@@ -1,0 +1,5 @@
+/target
+
+# Arch packaging artifacts
+/arch/*
+!/arch/PKGBUILD
