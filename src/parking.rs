@@ -7,7 +7,7 @@ use std::io;
 const PREFIX: &str = "special:hyprhyde-";
 
 /// Name of the special workspace parking windows hidden from workspace `origin`.
-pub fn parking_workspace(origin: i64) -> String {
+fn parking_workspace(origin: i64) -> String {
     format!("{PREFIX}{origin}")
 }
 

@@ -50,7 +50,7 @@ pub fn event_socket() -> io::Result<PathBuf> {
 }
 
 /// Send one request to `.socket.sock` and return the full reply.
-pub fn request(command: &str) -> io::Result<String> {
+fn request(command: &str) -> io::Result<String> {
     let mut stream = UnixStream::connect(socket_dir()?.join(".socket.sock"))?;
     stream.write_all(command.as_bytes())?;
     stream.shutdown(std::net::Shutdown::Write)?;

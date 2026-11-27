@@ -6,7 +6,7 @@ use std::path::{Path, PathBuf};
 const FALLBACK_ICON: &str = "application-x-executable";
 
 /// The `applications` directories of the XDG data dirs, most specific first.
-pub fn application_dirs() -> Vec<PathBuf> {
+fn application_dirs() -> Vec<PathBuf> {
     let home = std::env::var("HOME").unwrap_or_default();
     let data_home = std::env::var("XDG_DATA_HOME")
         .ok()
@@ -42,7 +42,7 @@ fn desktop_entry_value<'a>(text: &'a str, key: &str) -> Option<&'a str> {
 ///
 /// A file whose `StartupWMClass` matches the class wins; otherwise `<class>.desktop`, then its
 /// lowercase form.
-pub fn desktop_icon(class: &str, dirs: &[PathBuf]) -> Option<String> {
+fn desktop_icon(class: &str, dirs: &[PathBuf]) -> Option<String> {
     icon_by_wm_class(class, dirs)
         .or_else(|| icon_by_file_name(class, dirs))
         .filter(|icon| !icon.is_empty())
