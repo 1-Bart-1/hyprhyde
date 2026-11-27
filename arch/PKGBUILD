@@ -13,7 +13,8 @@ sha256sums=('SKIP')
 
 pkgver() {
     cd "$pkgname"
-    printf 'r%s.g%s' "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+    printf '%s.r%s.g%s' "$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml)" \
+        "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
 }
 
 prepare() {
