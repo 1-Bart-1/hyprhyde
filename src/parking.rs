@@ -27,7 +27,7 @@ fn hide_lua(window: &Client) -> Option<String> {
     if window.workspace.name.starts_with("special:") {
         return None;
     }
-    let parking = parking_workspace(window.workspace.id);
+    let parking = parking_workspace(window.workspace.id?);
     Some(move_lua(&window.address, &format!("'{parking}'")))
 }
 
@@ -51,12 +51,12 @@ mod tests {
     use super::*;
     use crate::hyprland::WorkspaceRef;
 
-    fn window_on(id: i64, name: &str) -> Client {
+    fn window_on(name: &str) -> Client {
         Client {
             address: "0x55ab".into(),
             class: "kitty".into(),
             title: "~".into(),
-            workspace: WorkspaceRef { id, name: name.into() },
+            workspace: WorkspaceRef { id: name.parse().ok(), name: name.into() },
         }
     }
 
@@ -80,7 +80,7 @@ mod tests {
     #[test]
     fn hiding_parks_the_window_under_its_workspace_id() {
         assert_eq!(
-            hide_lua(&window_on(4, "4")).unwrap(),
+            hide_lua(&window_on("4")).unwrap(),
             "hl.dsp.window.move({ workspace = 'special:hyprhyde-4', follow = false, \
              window = assert(hl.get_window([[address:0x55ab]])) })"
         );
@@ -88,8 +88,8 @@ mod tests {
 
     #[test]
     fn hiding_on_a_special_workspace_does_nothing() {
-        assert_eq!(hide_lua(&window_on(-98, "special:scratchpad")), None);
-        assert_eq!(hide_lua(&window_on(-97, "special:hyprhyde-4")), None);
+        assert_eq!(hide_lua(&window_on("special:scratchpad")), None);
+        assert_eq!(hide_lua(&window_on("special:hyprhyde-4")), None);
     }
 
     #[test]

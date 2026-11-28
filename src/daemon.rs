@@ -244,7 +244,7 @@ mod tests {
             address: address.into(),
             class: "kitty".into(),
             title: format!("title of {address}"),
-            workspace: WorkspaceRef { id: -97, name: workspace.into() },
+            workspace: WorkspaceRef { id: workspace.parse().ok(), name: workspace.into() },
         }
     }
 
