@@ -71,6 +71,10 @@ Start the daemon on login:
 hl.exec_cmd("hyprhyde daemon")
 ```
 
+## Testing
+
+`make test` runs the unit tests. `make e2e` runs hyprhyde against a real Hyprland in a QEMU guest built from an Arch container (needs Docker; uses KVM when `/dev/kvm` is writable). It hides, hovers and clicks through a virtual pointer, and leaves screenshots, logs and `results.txt` in `tests/e2e/out`.
+
 ## License
 
 MIT

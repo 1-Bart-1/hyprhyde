@@ -1,6 +1,6 @@
 BINARY := hyprhyde
 
-.PHONY: build install clean test
+.PHONY: build install clean test e2e
 
 build:
 	cargo build --release --locked
@@ -13,3 +13,6 @@ clean:
 
 test:
 	cargo test --locked
+
+e2e:
+	sh tests/e2e/run.sh
