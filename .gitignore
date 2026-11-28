@@ -1,0 +1,6 @@
+/target
+/tests/e2e/out
+
+# Arch packaging artifacts
+/arch/*
+!/arch/PKGBUILD
