@@ -72,7 +72,7 @@ struct Hidden {
     address: String,
     class: String,
     title: String,
-    workspace: i64,
+    workspace: String,
     monitor: String,
 }
 
@@ -80,12 +80,14 @@ struct Hidden {
 fn hidden_on(active: &ActiveWorkspace, clients: Vec<Client>) -> Vec<Hidden> {
     clients
         .into_iter()
-        .filter(|client| parking::origin_workspace(&client.workspace.name) == Some(active.id))
+        .filter(|client| {
+            parking::origin_workspace(&client.workspace.name) == Some(active.name.as_str())
+        })
         .map(|client| Hidden {
             address: client.address,
             class: client.class,
             title: client.title,
-            workspace: active.id,
+            workspace: active.name.clone(),
             monitor: active.monitor.clone(),
         })
         .collect()
@@ -141,9 +143,9 @@ fn open(app: &gtk::Application, corner: Corner, hidden: &Hidden) -> Bubble {
     let image = icon::image_for_class(&hidden.class);
     image.set_pixel_size(BUBBLE_SIZE / 2);
     let button = gtk::Button::builder().child(&image).css_classes(["bubble"]).build();
-    let (address, workspace) = (hidden.address.clone(), hidden.workspace);
+    let (address, workspace) = (hidden.address.clone(), hidden.workspace.clone());
     button.connect_clicked(move |_| {
-        if let Err(error) = parking::restore(&address, workspace) {
+        if let Err(error) = parking::restore(&address, &workspace) {
             eprintln!("hyprhyde: restoring {address}: {error}");
         }
     });
@@ -244,13 +246,13 @@ mod tests {
             address: address.into(),
             class: "kitty".into(),
             title: format!("title of {address}"),
-            workspace: WorkspaceRef { id: workspace.parse().ok(), name: workspace.into() },
+            workspace: WorkspaceRef { name: workspace.into() },
         }
     }
 
     #[test]
     fn only_windows_hidden_from_the_active_workspace_get_bubbles() {
-        let active = ActiveWorkspace { id: 4, monitor: "DP-1".into() };
+        let active = ActiveWorkspace { name: "4".into(), monitor: "DP-1".into() };
         let clients = vec![
             client("0x1", "special:hyprhyde-4"),
             client("0x2", "special:hyprhyde-5"),
@@ -261,7 +263,7 @@ mod tests {
         let hidden = hidden_on(&active, clients);
         let addresses: Vec<&str> = hidden.iter().map(|window| window.address.as_str()).collect();
         assert_eq!(addresses, ["0x1", "0x5"]);
-        assert!(hidden.iter().all(|window| window.workspace == 4 && window.monitor == "DP-1"));
+        assert!(hidden.iter().all(|window| window.workspace == "4" && window.monitor == "DP-1"));
     }
 
     #[test]

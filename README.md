@@ -11,7 +11,7 @@ No bar and no tray: each hidden window becomes one round bubble showing its app 
 - Bubbles belong to the workspace the window was hidden from: switch workspace and you see that workspace's bubbles instead. With no bubbles nothing is on screen and nothing takes clicks.
 - On several monitors the bubbles show on the focused monitor, for its active workspace.
 - The window title is the bubble's tooltip; bubbles fade in and out and light up on hover (Catppuccin Mocha colours).
-- No state file: a hidden window waits in the special workspace `special:hyprhyde-<workspace id>`, so a restarted daemon shows the bubbles left from before.
+- No state file: a hidden window waits in the special workspace `special:hyprhyde-<workspace name>`, so a restarted daemon shows the bubbles left from before.
 
 ## Dependencies
 

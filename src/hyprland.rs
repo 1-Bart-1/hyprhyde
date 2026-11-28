@@ -9,15 +9,13 @@ use std::path::PathBuf;
 /// A workspace as Hyprland reports it inside other objects.
 #[derive(Deserialize)]
 pub struct WorkspaceRef {
-    /// Numeric id; Hyprland leaves it out for special workspaces.
-    pub id: Option<i64>,
     pub name: String,
 }
 
 /// Reply to `j/activeworkspace`: the active workspace of the focused monitor.
 #[derive(Deserialize)]
 pub struct ActiveWorkspace {
-    pub id: i64,
+    pub name: String,
     pub monitor: String,
 }
 
@@ -127,6 +125,15 @@ mod tests {
     }
 
     #[test]
+    fn named_active_workspace_decodes() {
+        // Hyprland 0.57 writes no `id` for a named workspace.
+        let json = r#"{"address":"foo","type":"normal","name":"foo","monitor":"Virtual-1",
+            "monitorID":0,"windows":1,"hasfullscreen":false}"#;
+        let active: ActiveWorkspace = serde_json::from_str(json).unwrap();
+        assert_eq!((active.name.as_str(), active.monitor.as_str()), ("foo", "Virtual-1"));
+    }
+
+    #[test]
     fn clients_decode_on_regular_and_special_workspaces() {
         // Hyprland 0.57 writes no `id` for a client on a special workspace.
         let json = r#"[{"address":"0x55ab","mapped":true,"class":"kitty","title":"~",
@@ -135,8 +142,7 @@ mod tests {
             "workspace":{"address":"2","type":"normal","id":2,"name":"2"}}]"#;
         let clients: Vec<Client> = serde_json::from_str(json).unwrap();
         assert_eq!(clients[0].workspace.name, "special:hyprhyde-4");
-        assert_eq!(clients[0].workspace.id, None);
-        assert_eq!(clients[1].workspace.id, Some(2));
+        assert_eq!(clients[1].workspace.name, "2");
         assert_eq!(clients[1].class, "firefox");
     }
 
